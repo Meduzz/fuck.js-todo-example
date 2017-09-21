@@ -20,15 +20,15 @@ class TodoList extends Component {
 			)
 		),
 		div(cls := "panel-tabs",
-			a(if (filter == "all") {cls := "is-active"}, onclick := trigger(Filter("all")),
+			a(if (filter == "all") {cls := "is-active"}, href := "#/all",
 				span("all"),
 				span(cls := "tag is-dark", todos.size)
 			),
-			a(if (filter == "done") {cls := "is-active"}, onclick := trigger(Filter("done")),
+			a(if (filter == "done") {cls := "is-active"}, href := "#/done",
 				span("completed"),
 				span(cls := "tag is-success", todos.count(_.done))
 			),
-			a(if (filter == "not done") {cls := "is-active"}, onclick := trigger(Filter("not done")),
+			a(if (filter == "not done") {cls := "is-active"}, href := "#/notdone",
 				span("not completed"),
 				span(cls := "tag is-danger", todos.count(!_.done))
 			)
