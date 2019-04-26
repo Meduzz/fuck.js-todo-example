@@ -1,14 +1,14 @@
 package se.chimps.fuckjs.example.todo.components
 
-import se.chimps.fuckjs.{Component, Mutation, UI}
-
+import org.scalajs.dom.raw.Node
+import se.chimps.fuckjs.{Component, Mutation, Navigation}
 import scalatags.JsDom.all._
 
 class TodoList extends Component {
 	private var todos:Seq[Todo] = Seq()
 	private var filter:String = "all"
 
-	override def view() = div(cls := "panel",
+	override def view():Node = div(cls := "panel",
 		div(cls := "panel-block",
 			div(cls := "menu",
 				ul(cls := "menu-list",
@@ -35,15 +35,19 @@ class TodoList extends Component {
 		)
 	).render
 
-	override def handle = {
+	override def handle:PartialFunction[Mutation, Unit] = {
 		case ToggleTodo(todo) => {
 			val toggled = todo.copy(done = !todo.done)
 			todos = todos.filterNot(t => t.text == todo.text) ++ Seq(toggled)
-			true
+			update()
 		}
 		case Filter(text) => {
 			filter = text
-			true
+			update()
+		}
+		case DoneTyping(text) => {
+			todos = todos ++ Seq(Todo(false, text))
+			update()
 		}
 	}
 
@@ -54,15 +58,8 @@ class TodoList extends Component {
 			case "not done" => t.filter(!_.done)
 		}
 	}
-
-	UI.on({
-		case DoneTyping(text) => {
-			todos = todos ++ Seq(Todo(false, text))
-			update()
-		}
-	})
 }
 
 case class Todo(done:Boolean, text:String)
 case class ToggleTodo(todo:Todo) extends Mutation
-case class Filter(text:String) extends Mutation
+case class Filter(text:String) extends Navigation
