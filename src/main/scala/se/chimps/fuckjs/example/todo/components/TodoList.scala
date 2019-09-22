@@ -1,39 +1,38 @@
 package se.chimps.fuckjs.example.todo.components
 
-import org.scalajs.dom.raw.Node
-import se.chimps.fuckjs.{Component, Mutation, Navigation}
-import scalatags.JsDom.all._
+import se.chimps.fuckjs.html.RealTag
+import se.chimps.fuckjs.{Component, EventHandler, Mutation}
 
-class TodoList extends Component {
+class TodoList extends Component with EventHandler {
 	private var todos:Seq[Todo] = Seq()
 	private var filter:String = "all"
 
-	override def view():Node = div(cls := "panel",
-		div(cls := "panel-block",
-			div(cls := "menu",
-				ul(cls := "menu-list",
-					for (t <- doFilter(todos)) yield li(
-						input(`type` := "checkbox", cls := "checkbox", if (t.done) {checked:="checked"}, onclick := trigger(ToggleTodo(t))),
-						t.text
+	override def view():RealTag = div(clazz("panel"))(
+		div(clazz("panel-block"))(
+			div(clazz("menu"))(
+				tag("ul.menu-list", Seq(),
+					for (t <- doFilter(todos)) yield li()(
+						input(typ("checkbox"), clazz("checkbox"), if (t.done) {attribute("checked", "checked")} else { title("unchecked") }, on("click", trigger(ToggleTodo(t))))(),
+						span()(text(t.text))
 					)
 				)
 			)
 		),
-		div(cls := "panel-tabs",
-			a(if (filter == "all") {cls := "is-active"}, href := "#/all",
-				span("all"),
-				span(cls := "tag is-dark", todos.size)
+		div(clazz("panel-tabs"))(
+			a(if (filter == "all") {clazz("is-active")} else { clazz("") }, href("#/all"))(
+				span()(text("all")),
+				span(clazz("tag is-dark"))(text(s"${todos.size}"))
 			),
-			a(if (filter == "done") {cls := "is-active"}, href := "#/done",
-				span("completed"),
-				span(cls := "tag is-success", todos.count(_.done))
+			a(if (filter == "done") {clazz("is-active")} else { clazz("") }, href("#/done"))(
+				span()(text("completed")),
+				span(clazz("tag is-success"))(text(s"${todos.count(_.done)}"))
 			),
-			a(if (filter == "not done") {cls := "is-active"}, href := "#/notdone",
-				span("not completed"),
-				span(cls := "tag is-danger", todos.count(!_.done))
+			a(if (filter == "not done") {clazz("is-active")} else { clazz("") }, href("#/notdone"))(
+				span()(text("not completed")),
+				span(clazz("tag is-danger"))(text(s"${todos.count(!_.done)}"))
 			)
 		)
-	).render
+	)
 
 	override def handle:PartialFunction[Mutation, Unit] = {
 		case ToggleTodo(todo) => {
@@ -62,4 +61,4 @@ class TodoList extends Component {
 
 case class Todo(done:Boolean, text:String)
 case class ToggleTodo(todo:Todo) extends Mutation
-case class Filter(text:String) extends Navigation
+case class Filter(text:String) extends Mutation

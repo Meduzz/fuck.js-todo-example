@@ -1,6 +1,6 @@
 package se.chimps.fuckjs.example.todo
 
-import se.chimps.fuckjs.{UI}
+import se.chimps.fuckjs.UI
 import se.chimps.fuckjs.example.todo.components.{Filter, TodoInput, TodoList}
 
 object Main {
@@ -8,10 +8,10 @@ object Main {
 		val input = new TodoInput()
 		val list = new TodoList()
 
-		UI.mount(input, "#inputField")
-		UI.mount(list, "#todoList")
+		UI.register(input, "#inputField")
+		UI.register(list, "#todoList")
 
-		UI.routing((e) => {
+		UI.routing(e => {
 			if (e.newURL.endsWith("#/all")) {
 				Filter("all")
 			} else if (e.newURL.endsWith("#/done")) {
